@@ -2,23 +2,28 @@ package com.example.practice
 
 import android.app.Application
 import com.kakaomobility.knsdk.KNSDK
+import android.util.Log
 
 class KNApplication : Application() {
     companion object {
         lateinit var knsdk: KNSDK
     }
+
     override fun onCreate() {
         super.onCreate()
+        Log.d("KNApplication", "onCreate() 실행됨")  // ✅ 꼭 찍히는지 확인!
         initialize()
     }
-    /**
-     * 길찾기 SDK의 초기화 및 파일이 저장될 경로를 설정합니다
-     */
-    fun initialize() {
+
+    private fun initialize() {
+        Log.d("KNApplication", "initialize() 진입 - KNSDK install 호출 시도")
+
         knsdk = KNSDK.apply {
-            //  파일 경로: data/data/com.example.practice/files/KNSample
+            Log.d("KNApplication", "KNSDK.install() 호출 중 - filesDir = $filesDir")
             install(this@KNApplication, "$filesDir/KNSample")
+            Log.d("KNApplication", "KNSDK.install() 호출 완료")
         }
+
+        Log.d("KNApplication", "initialize() 종료")
     }
 }
-

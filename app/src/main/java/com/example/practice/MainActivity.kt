@@ -85,43 +85,31 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun knsdkAuth() {
         Log.d("MainActivity", "knsdkAuth() 진입")
 
-        KNApplication.knsdk.apply {
-            Log.d("MainActivity", "initializeWithAppKey() 호출 시작")
+        KNApplication.knsdk.initializeWithAppKey(
+            aAppKey = "31d8cf5f175c769c9ab8ed569571621b",
+            aClientVersion = "1.0.0",
+            aUserKey = "testUser",
+            aLangType = com.kakaomobility.knsdk.KNLanguageType.KNLanguageType_KOREAN
+        ) { error ->
+            Log.d("MainActivity", "initializeWithAppKey() 콜백 진입")
 
-            initializeWithAppKey(
-                aAppKey = "31d8cf5f175c769c9ab8ed569571621b",  // 앱 키
-                aClientVersion = "1.0.0",                      // 버전
-                aUserKey = "testUser",                         // 유저 키
-                aLangType = KNLanguageType.KNLanguageType_KOREAN,  // 언어
-                aCompletion = { it ->
+            runOnUiThread {
+                when (error) {
+                    null -> {
+                        Log.d("MainActivity", "인증 성공")
+                        Toast.makeText(applicationContext, "인증 성공하였습니다", Toast.LENGTH_LONG).show()
+                        startActivity(Intent(this, NaviActivity::class.java))
+                    }
 
-                    Log.d("MainActivity", "initializeWithAppKey() 콜백 진입")
-
-                    runOnUiThread {
-                        Log.d("MainActivity", "UIThread 진입 - 콜백 실행 중")
-
-                        if (it != null) {
-                            Log.d("MainActivity", "인증 실패 - error: ${it.message}, code: ${it.code}")
-                            Toast.makeText(applicationContext, "인증에 실패하였습니다", Toast.LENGTH_LONG).show()
-
-                        } else {
-                            Log.d("MainActivity", "인증 성공")
-                            Toast.makeText(applicationContext, "인증 성공하였습니다", Toast.LENGTH_LONG).show()
-
-                            try {
-                                Log.d("MainActivity", "NaviActivity로 이동 시도")
-                                val intent = Intent(this@MainActivity, NaviActivity::class.java)
-                                this@MainActivity.startActivity(intent)
-                            } catch (e: Exception) {
-                                Log.e("MainActivity", "NaviActivity 이동 중 오류: ${e.message}")
-                            }
-                        }
+                    else -> {
+                        Log.e("MainActivity", "인증 실패 - code: ${error.code}, message: ${error.toString()}")
+                        Toast.makeText(applicationContext, "인증 실패: ${error.toString()}", Toast.LENGTH_LONG).show()
                     }
                 }
-            )
-
-            Log.d("MainActivity", "initializeWithAppKey() 호출 완료")
+            }
         }
+
+        Log.d("MainActivity", "initializeWithAppKey() 호출 완료")
 
         Log.d("MainActivity", "knsdkAuth() 종료")
     }

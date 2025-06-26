@@ -63,7 +63,7 @@ class NaviActivity : AppCompatActivity(), KNGuidance_GuideStateDelegate,
 
                 // 경로 요청이 성공하면 aError는 Null이 됩니다.
                 if (aError == null) {
-
+                    startGuide(aTrip)
                 }
             }
         }.start()
