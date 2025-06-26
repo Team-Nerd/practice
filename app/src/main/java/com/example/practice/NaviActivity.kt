@@ -3,6 +3,7 @@ package com.example.practice
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.kakaomobility.knsdk.KNRoutePriority
 import com.kakaomobility.knsdk.common.objects.KNError
@@ -44,6 +45,9 @@ class NaviActivity : AppCompatActivity(), KNGuidance_GuideStateDelegate,
             statusBarColor = Color.TRANSPARENT
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         }
+
+        naviView.sndVolume = 0.5f
+
         requestRoute()
     }
     /**
@@ -52,8 +56,8 @@ class NaviActivity : AppCompatActivity(), KNGuidance_GuideStateDelegate,
     fun requestRoute() {
         Thread {
             // 출발지와 목적지를 설정합니다.
-            val startPoi = KNPOI("현위치",309840,552483,"현위치")
-            val goalPoi = KNPOI("목적지",321497,532896,"목적지")
+            val startPoi = KNPOI("현위치", 309840, 552483, "현위치")
+            val goalPoi = KNPOI("목적지", 321497, 532896, "목적지")
 
             KNApplication.knsdk.makeTripWithStart(
                 aStart = startPoi,
@@ -61,9 +65,22 @@ class NaviActivity : AppCompatActivity(), KNGuidance_GuideStateDelegate,
                 aVias = null
             ) { aError, aTrip ->
 
-                // 경로 요청이 성공하면 aError는 Null이 됩니다.
-                if (aError == null) {
-                    startGuide(aTrip)
+                runOnUiThread {
+                    if (aError == null && aTrip != null) {
+
+                        // ✅ 차량 정보 및 음성 안내 설정
+
+                        naviView.sndVolume = 0.7f
+
+                        // ✅ 주행 경로 지도에 표시
+                        startGuide(aTrip)
+
+                        // ✅ 주행 안내 시작
+                        startGuide(aTrip)
+
+                    } else {
+                        Toast.makeText(applicationContext, "경로 요청 실패", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }.start()
