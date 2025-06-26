@@ -16,7 +16,7 @@ class KNApplication : Application() {
      */
     fun initialize() {
         knsdk = KNSDK.apply {
-            //  파일 경로: data/data/com.kakaomobility.knsample/files/KNSample
+            //  파일 경로: data/data/com.example.practice/files/KNSample
             install(this@KNApplication, "$filesDir/KNSample")
         }
     }
