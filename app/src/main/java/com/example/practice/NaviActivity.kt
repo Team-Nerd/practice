@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.kakaomobility.knsdk.guidance.KNGuideStateDelegate
 import com.kakaomobility.knsdk.guidance.KNRouteGuideDelegate
 
-import com.example.practice.
+import com.example.practice
 
 class NaviActivity : AppCompatActivity(), KNGuidance_GuideStateDelegate {
 
