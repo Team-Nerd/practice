@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import com.example.practice.KNApplication
 import com.example.practice.KNLanguageType
 import com.kakaomobility.knsdk.common.objects.KNError
+import android.util.Log
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -37,14 +38,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * GPS 위치 권한을 확인합니다.
      */
     private fun checkPermission() {
+        Log.d("MainActivity", "checkPermission() 진입")
         when {
             checkSelfPermission(
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED -> {
-                // GPS 퍼미션 체크
+                Log.d("MainActivity", "위치 권한 없음 → 권한 요청")
+                gpsPermissionCheck()
             }
 
             else -> {
                 // 길찾기 SDK 인증
+                Log.d("MainActivity", "위치 권한 있음 → knsdkAuth() 호출")
                 knsdkAuth()
             }
         }
@@ -79,39 +83,61 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
      * 길찾기 SDK 인증을 진행합니다.
      */
     private fun knsdkAuth() {
+        Log.d("MainActivity", "knsdkAuth() 진입")
+
         KNApplication.knsdk.apply {
+            Log.d("MainActivity", "initializeWithAppKey() 호출 시작")
+
             initializeWithAppKey(
-                aAppKey = "814cecf78236f15dcd224ea79577eb7d",       // 카카오디벨로퍼스에서 부여 받은 앱 키
-                aClientVersion = "1.0.0",                                               // 현재 앱의 클라이언트 버전
-                aUserKey = "testUser",                                                  // 사용자 id
-                aLangType = KNLanguageType.KNLanguageType_KOREAN,   // 언어 타입
-                aCompletion = {
-                    // it이 null이 아닐 경우 에러가 발생한 경우입니다.
-                    // it.message를 통해 에러 메시지를 확인할 수 있습니다.
-                    // it.code를 통해 에러 코드를 확인할 수 있습니다.
-                    // ex) Toast.makeText(applicationContext, "인증에 실패하였습니다.\n errorCode: ${it?.code} \n errorMessage: ${it?.message}", Toast.LENGTH_LONG).show()
-                    // Toast는 UI를 갱신하는 작업이기 때문에 UIThread에서 동작되도록 해야 합니다.
+                aAppKey = "31d8cf5f175c769c9ab8ed569571621b",  // 앱 키
+                aClientVersion = "1.0.0",                      // 버전
+                aUserKey = "testUser",                         // 유저 키
+                aLangType = KNLanguageType.KNLanguageType_KOREAN,  // 언어
+                aCompletion = { it ->
+
+                    Log.d("MainActivity", "initializeWithAppKey() 콜백 진입")
+
                     runOnUiThread {
+                        Log.d("MainActivity", "UIThread 진입 - 콜백 실행 중")
+
                         if (it != null) {
+                            Log.d("MainActivity", "인증 실패 - error: ${it.message}, code: ${it.code}")
                             Toast.makeText(applicationContext, "인증에 실패하였습니다", Toast.LENGTH_LONG).show()
 
                         } else {
+                            Log.d("MainActivity", "인증 성공")
                             Toast.makeText(applicationContext, "인증 성공하였습니다", Toast.LENGTH_LONG).show()
 
-                            var intent = Intent(this@MainActivity, NaviActivity::class.java)
-                            this@MainActivity.startActivity(intent)
+                            try {
+                                Log.d("MainActivity", "NaviActivity로 이동 시도")
+                                val intent = Intent(this@MainActivity, NaviActivity::class.java)
+                                this@MainActivity.startActivity(intent)
+                            } catch (e: Exception) {
+                                Log.e("MainActivity", "NaviActivity 이동 중 오류: ${e.message}")
+                            }
                         }
                     }
-                })
+                }
+            )
+
+            Log.d("MainActivity", "initializeWithAppKey() 호출 완료")
         }
+
+        Log.d("MainActivity", "knsdkAuth() 종료")
     }
 
-    private fun initializeWithAppKey(aAppKey: String, aClientVersion: String, aUserKey: String, aLangType: KNLanguageType, aCompletion: (aError: KNError?) -> Unit) {
+    fun initializeWithAppKey(aAppKey: String, aClientVersion: String, aUserKey: String, aLangType: KNLanguageType, aCompletion: (aError: KNError?) -> Unit) {
 
     }
 
     override fun onClick(v: View?) {
-        TODO("Not yet implemented")
+        Log.d("MainActivity", "onClick 호출됨")
+        when (v?.id) {
+            R.id.btn_guide -> {
+                Log.d("MainActivity", "btn_guide 눌림")
+                checkPermission()
+            }
+        }
     }
 
 

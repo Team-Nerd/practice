@@ -14,7 +14,7 @@
         android:layout_height="60dp"
         android:textColor="@color/black"
         android:textSize="14sp"
-        android:text="인증하기"
+        android:text="@string/btn_guide_label"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

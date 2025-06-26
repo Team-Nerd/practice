@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">practice</string>
+    <string name="btn_guide_label">인증하기</string>
 </resources>
